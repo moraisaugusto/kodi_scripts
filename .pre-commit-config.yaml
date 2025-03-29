@@ -1,0 +1,11 @@
+
+repos:
+  - repo: https://github.com/psf/black
+    rev: 25.1.0  # Use the latest stable version
+    hooks:
+      - id: black
+
+  - repo: https://github.com/pylint-dev/pylint
+    rev: v3.3.6  # Check for the latest release
+    hooks:
+      - id: pylint

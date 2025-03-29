@@ -1,0 +1,21 @@
+[project]
+name = "kodi-scripts"
+version = "0.1.0"
+description = "Useful scripts for Kodi/LibreELEC"
+authors = [
+    {name = "Augusto Morais",email = "augusto@morais.io"}
+]
+license = {text = "GNU"}
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+]
+
+[tool.poetry]
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.2.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
