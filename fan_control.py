@@ -2,7 +2,8 @@
 Fan Control Script for Raspberry Pi
 
 This script monitors the CPU temperature and controls a cooling fan using a GPIO pin.
-It turns the fan on when the temperature exceeds a defined threshold and off when it falls below another threshold.
+It turns the fan on when the temperature exceeds a defined threshold and off when
+it falls below another threshold.
 
 Dependencies:
     - `gpiozero` (Required for controlling GPIO pins. Install it via Kodi UI if missing.)
@@ -52,20 +53,23 @@ def get_temp():
     Returns:
         float: The core temperature in degrees Celsius.
     """
-    output = subprocess.run(['vcgencmd', 'measure_temp'], capture_output=True)
+    output = subprocess.run(
+        ["vcgencmd", "measure_temp"], capture_output=True, check=True
+    )
+
     temp_str = output.stdout.decode()
     try:
-        return float(temp_str.split('=')[1].split('\'')[0])
-    except (IndexError, ValueError):
-        raise RuntimeError('Could not parse temperature output.')
+        return float(temp_str.split("=")[1].split("'")[0])
+    except (IndexError, ValueError) as ex:
+        raise RuntimeError("Could not parse temperature output.") from ex
 
 
 def setup_logger(debug=False):
     """Setup and configure the logger for both file and console output.
-    
-    Configures a logger named "app_logger" with logging level set to INFO. 
-    Logs are written to a file specified by LOG_FILENAME with a formatter that includes 
-    timestamp, log level, and message. If debug mode is enabled, logs are also printed 
+
+    Configures a logger named "app_logger" with logging level set to INFO.
+    Logs are written to a file specified by LOG_FILENAME with a formatter that includes
+    timestamp, log level, and message. If debug mode is enabled, logs are also printed
     to the console.
 
     Args:
@@ -97,11 +101,14 @@ def setup_logger(debug=False):
 
 
 def main():
-    """Run the script with optional debugging. Monitors CPU temperature and controls a fan based on predefined thresholds.
-    
-    The script uses command-line arguments to enable debug mode, which logs messages both to file and console.
-    It continuously monitors the CPU temperature every SLEEP_INTERVAL seconds, turning the fan on if the
-    temperature exceeds ON_THRESHOLD and turning it off when it drops below OFF_THRESHOLD.
+    """Run the script with optional debugging. Monitors CPU temperature and controls a
+    fan based on predefined thresholds.
+
+    The script uses command-line arguments to enable debug mode, which logs messages
+    both to file and console.
+    It continuously monitors the CPU temperature every SLEEP_INTERVAL seconds, turning
+    the fan on if the temperature exceeds ON_THRESHOLD and turning it off when it drops
+    below OFF_THRESHOLD.
 
     Args:
         None
@@ -115,19 +122,24 @@ def main():
     Example:
         To run the script without debug mode:
             python script.py
-        
+
         To run with debug mode enabled:
             python script.py --debug
     """
-    parser = argparse.ArgumentParser(description="Run the script with optional debugging.")
-    parser.add_argument("--debug", action="store_true", help="Enable debug mode (log messages to console).")
+    parser = argparse.ArgumentParser(
+        description="Run the script with optional debugging."
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug mode (log messages to console).",
+    )
     args = parser.parse_args()
     logger = setup_logger(debug=args.debug)
 
     # Create a logger for file logging
     if OFF_THRESHOLD >= ON_THRESHOLD:
-        raise RuntimeError('OFF_THRESHOLD must be less than ON_THRESHOLD')
-
+        raise RuntimeError("OFF_THRESHOLD must be less than ON_THRESHOLD")
 
     fan = OutputDevice(GPIO_PIN)
 
@@ -151,5 +163,5 @@ def main():
         time.sleep(SLEEP_INTERVAL)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
