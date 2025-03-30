@@ -47,18 +47,21 @@ LOG_FILENAME = "/var/log/fan_control.log"
 
 def get_temp():
     """Get the core temperature.
+
     Run a shell script to get the core temp and parse the output.
+
     Raises:
         RuntimeError: if response cannot be parsed.
+
     Returns:
         float: The core temperature in degrees Celsius.
     """
-    output = subprocess.run(
-        ["vcgencmd", "measure_temp"], capture_output=True, check=True
-    )
-
-    temp_str = output.stdout.decode()
+    # Execute the command to get the core temperature
     try:
+        output = subprocess.run(["vcgencmd", "measure_temp"], capture_output=True, check=True)
+
+        # Decode the output and extract the temperature value
+        temp_str = output.stdout.decode()
         return float(temp_str.split("=")[1].split("'")[0])
     except (IndexError, ValueError) as ex:
         raise RuntimeError("Could not parse temperature output.") from ex
@@ -79,18 +82,21 @@ def setup_logger(debug=False):
     Returns:
         logging.Logger: The configured logger instance ready for use.
     """
+    # Create a custom logger named "app_logger"
     logger = logging.getLogger("app_logger")
     logger.setLevel(logging.INFO)
 
+    # File handler to write logs to the specified file
     file_handler = logging.FileHandler(LOG_FILENAME)
     file_handler.setLevel(logging.INFO)
 
+    # Formatter for log messages with timestamp, level, and message
     file_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
     file_handler.setFormatter(file_formatter)
     logger.addHandler(file_handler)
 
+    # If debug mode is enabled, add a console handler to output logs to the console
     if debug:
-        # Create a logger for console output
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.INFO)
 
@@ -104,21 +110,6 @@ def main():
     """Run the script with optional debugging. Monitors CPU temperature and controls a
     fan based on predefined thresholds.
 
-    The script uses command-line arguments to enable debug mode, which logs messages
-    both to file and console.
-    It continuously monitors the CPU temperature every SLEEP_INTERVAL seconds, turning
-    the fan on if the temperature exceeds ON_THRESHOLD and turning it off when it drops
-    below OFF_THRESHOLD.
-
-    Args:
-        None
-
-    Returns:
-        None
-
-    Raises:
-        RuntimeError: If OFF_THRESHOLD is not less than ON_THRESHOLD.
-
     Example:
         To run the script without debug mode:
             python script.py
@@ -126,15 +117,14 @@ def main():
         To run with debug mode enabled:
             python script.py --debug
     """
-    parser = argparse.ArgumentParser(
-        description="Run the script with optional debugging."
-    )
+    parser = argparse.ArgumentParser(description="Run the script with optional debugging.")
     parser.add_argument(
         "--debug",
         action="store_true",
         help="Enable debug mode (log messages to console).",
     )
     args = parser.parse_args()
+
     logger = setup_logger(debug=args.debug)
 
     # Create a logger for file logging
@@ -147,15 +137,9 @@ def main():
         temp = get_temp()
         logger.info(f"CPU temp: {temp}")
 
-        # Start the fan if the temperature has reached the limit and the fan
-        # isn't already running.
-        # NOTE: `fan.value` returns 1 for "on" and 0 for "off"
         if temp > ON_THRESHOLD and not fan.value:
             logger.warning("Turning on Fan")
             fan.on()
-
-        # Stop the fan if the fan is running and the temperature has dropped
-        # to 10 degrees below the limit.
         elif fan.value and temp < OFF_THRESHOLD:
             logger.warning("Turning off Fan")
             fan.off()
