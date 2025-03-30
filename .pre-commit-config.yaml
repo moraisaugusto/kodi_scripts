@@ -18,3 +18,4 @@ repos:
     rev: v0.44.0
     hooks:
     - id: markdownlint
+      args: ["-f"]
