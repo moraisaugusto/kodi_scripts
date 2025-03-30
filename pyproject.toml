@@ -20,7 +20,28 @@ pre-commit = "^4.2.0"
 line-length = 98
 
 [tool.ruff]
-line-length = 98
+fix = true
+line-length = 100
+
+[tool.ruff.lint]
+select = ["D", "E", "F", "W", "I", "UP", "G"]
+ignore = [
+  "D100",  # Missing docstring in public module
+  "D101",  # Missing docstring in public class
+  "D102",  # Missing docstring in public method
+  "D103",  # Missing docstring in public function
+  "D104",  # Missing docstring in public package
+  "D105",  # Missing docstring in magic method
+  "D107",  # Missing docstring in `__init__`
+  "E501",  # line too long
+]
+ignore-init-module-imports = true
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
