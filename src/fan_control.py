@@ -1,5 +1,4 @@
-"""
-Fan Control Script for Raspberry Pi
+"""Fan Control Script for Raspberry Pi.
 
 This script monitors the CPU temperature and controls a cooling fan using a GPIO pin.
 It turns the fan on when the temperature exceeds a defined threshold and off when
@@ -26,11 +25,11 @@ Raises:
 
 #!/usr/bin/env python3
 
-import subprocess
-import logging
 import argparse
-import time
+import logging
+import subprocess
 import sys
+import time
 
 try:
     sys.path.append("/storage/.kodi/addons/virtual.rpi-tools/lib")
@@ -107,7 +106,9 @@ def setup_logger(debug=False):
 
 
 def main():
-    """Run the script with optional debugging. Monitors CPU temperature and controls a
+    """Main.
+
+    Run the script with optional debugging. Monitors CPU temperature and controls a
     fan based on predefined thresholds.
 
     Example:
@@ -135,7 +136,7 @@ def main():
 
     while True:
         temp = get_temp()
-        logger.info(f"CPU temp: {temp}")
+        logger.info("CPU temp: %s", temp)
 
         if temp > ON_THRESHOLD and not fan.value:
             logger.warning("Turning on Fan")
